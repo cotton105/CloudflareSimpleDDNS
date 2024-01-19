@@ -6,7 +6,10 @@
 # Cloudflare accordingly.
 ##########################################################################
 
-cache_file='lastpinged.txt'
+cache_file='cached_ip.txt'
+if [ ! -f $cache_file ]; then
+    touch $cache_file
+fi
 
 current_ip=$(curl -s ifconfig.co)
 cached_ip="$(cat $cache_file)"
