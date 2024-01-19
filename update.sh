@@ -10,6 +10,8 @@ if [ ! -f $api_config_file ]; then
     cat > $api_config_file<< EOF
 API_EMAIL=
 API_KEY=
+API_ZONE_ID=
+API_ACCOUNT_ID=
 EOF
 fi
 source $api_config_file
