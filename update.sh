@@ -1,10 +1,11 @@
 #!/bin/bash
-
 ##########################################################################
 # This is intended to be set up as a cron job.
 # It will periodically check whether the public IP has changed, and update
 # Cloudflare accordingly.
 ##########################################################################
+
+source api.conf
 
 cache_file='cached_ip.txt'
 if [ ! -f $cache_file ]; then
