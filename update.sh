@@ -16,6 +16,7 @@ cached_ip="$(cat $cache_file)"
 
 if [ $current_ip != $cached_ip ]; then
     echo run api command!
+    echo $current_ip > $cache_file
 else
     echo "don't run api command!"
 fi
