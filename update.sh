@@ -5,7 +5,7 @@
 # Cloudflare accordingly.
 ##########################################################################
 
-api_config_file='api.conf'
+api_config_file="$(pwd)/api.conf"
 if [ ! -f $api_config_file ]; then
     cat > $api_config_file<< EOF
 API_TOKEN=
@@ -21,7 +21,7 @@ if [ -z $API_TOKEN ] || [ -z $API_ZONE_ID ] || [ -z API_ACCOUNT_ID ] || [ -z DOM
     exit 1
 fi
 
-cache_file='cached_ip.txt'
+cache_file="$(pwd)/cached_ip.txt"
 if [ ! -f $cache_file ]; then
     touch $cache_file
 fi
