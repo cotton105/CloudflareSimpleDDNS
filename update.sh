@@ -31,7 +31,7 @@ current_ip="$(curl -s ifconfig.co)"
 cached_ip="$(cat $cache_file)"
 
 if [ "$current_ip" != "$cached_ip" ]; then
-    echo run api command!
+    echo Cached address is outdated. Updating Cloudflare...
     curl --request PUT \
         --url "https://api.cloudflare.com/client/v4/zones/$API_ZONE_ID/dns_records/$API_RECORD_ID" \
         --header "Content-Type: application/json" \
@@ -46,9 +46,4 @@ if [ "$current_ip" != "$cached_ip" ]; then
             \"ttl\": 1
         }"
     echo $current_ip > $cache_file
-else
-    echo "don't run api command!"
 fi
-
-echo ifconfig: $current_ip
-echo cached: $cached_ip
