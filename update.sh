@@ -23,4 +23,3 @@ fi
 
 echo ifconfig: $current_ip
 echo cached: $cached_ip
-sleep 1s
