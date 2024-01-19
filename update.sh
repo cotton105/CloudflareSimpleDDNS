@@ -30,7 +30,7 @@ fi
 current_ip="$(curl -s ifconfig.co)"
 cached_ip="$(cat $cache_file)"
 
-if [ $current_ip != $cached_ip ]; then
+if [ "$current_ip" != "$cached_ip" ]; then
     echo run api command!
     curl --request PUT \
         --url "https://api.cloudflare.com/client/v4/zones/$API_ZONE_ID/dns_records/$API_ACCOUNT_ID" \
