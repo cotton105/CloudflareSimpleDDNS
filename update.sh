@@ -11,7 +11,7 @@ if [ ! -f $api_config_file ]; then
 API_EMAIL=
 API_KEY=
 API_ZONE_ID=
-API_ACCOUNT_ID=
+API_RECORD_ID=
 DOMAIN_NAME=
 PROXIED=
 EOF
@@ -33,17 +33,17 @@ cached_ip="$(cat $cache_file)"
 if [ "$current_ip" != "$cached_ip" ]; then
     echo run api command!
     curl --request PUT \
-        --url "https://api.cloudflare.com/client/v4/zones/$API_ZONE_ID/dns_records/$API_ACCOUNT_ID" \
+        --url "https://api.cloudflare.com/client/v4/zones/$API_ZONE_ID/dns_records/$API_RECORD_ID" \
         --header "Content-Type: application/json" \
         --header "X-Auth-Email: $API_EMAIL" \
         --header "X-Auth-Key: $API_KEY" \
         --data "{
-            'content': '$current_ip',
-            'name': '$DOMAIN_NAME',
-            'proxied': $PROXIED,
-            'type': 'A',
-            'comment': 'Updated by AutoDNSUpdate on $(date)',
-            'ttl': 1
+            \"content\": \"$current_ip\",
+            \"name\": \"$DOMAIN_NAME\",
+            \"proxied\": $PROXIED,
+            \"type\": \"A\",
+            \"comment\": \"Updated by AutoDNSUpdate on $(date)\",
+            \"ttl\": 1
         }"
     echo $current_ip > $cache_file
 else
