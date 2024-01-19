@@ -11,7 +11,7 @@ if [ ! -f $cache_file ]; then
     touch $cache_file
 fi
 
-current_ip=$(curl -s ifconfig.co)
+current_ip="$(curl -s ifconfig.co)"
 cached_ip="$(cat $cache_file)"
 
 if [ $current_ip != $cached_ip ]; then
