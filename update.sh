@@ -5,7 +5,18 @@
 # Cloudflare accordingly.
 ##########################################################################
 
-source api.conf
+api_config_file='api.conf'
+if [ ! -f $api_config_file ]; then
+    cat > $api_config_file<< EOF
+API_EMAIL=
+API_KEY=
+EOF
+fi
+source $api_config_file
+if [ -z $API_EMAIL -o -z $API_KEY ]; then
+    echo API details must be specified in api.conf.
+    exit 1
+fi
 
 cache_file='cached_ip.txt'
 if [ ! -f $cache_file ]; then
