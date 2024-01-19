@@ -8,8 +8,7 @@
 api_config_file='api.conf'
 if [ ! -f $api_config_file ]; then
     cat > $api_config_file<< EOF
-API_EMAIL=
-API_KEY=
+API_TOKEN=
 API_ZONE_ID=
 API_RECORD_ID=
 DOMAIN_NAME=
@@ -17,7 +16,7 @@ PROXIED=
 EOF
 fi
 source $api_config_file
-if [ -z $API_EMAIL ] || [ -z $API_KEY ] || [ -z $API_ZONE_ID ] || [ -z API_ACCOUNT_ID ] || [ -z DOMAIN_NAME ] || [ -z PROXIED ]; then
+if [ -z $API_TOKEN ] || [ -z $API_ZONE_ID ] || [ -z API_ACCOUNT_ID ] || [ -z DOMAIN_NAME ] || [ -z PROXIED ]; then
     echo API details must be specified in api.conf.
     exit 1
 fi
@@ -35,8 +34,7 @@ if [ "$current_ip" != "$cached_ip" ]; then
     curl --request PUT \
         --url "https://api.cloudflare.com/client/v4/zones/$API_ZONE_ID/dns_records/$API_RECORD_ID" \
         --header "Content-Type: application/json" \
-        --header "X-Auth-Email: $API_EMAIL" \
-        --header "X-Auth-Key: $API_KEY" \
+        --header "Authorization: Bearer $API_TOKEN" \
         --data "{
             \"content\": \"$current_ip\",
             \"name\": \"$DOMAIN_NAME\",
