@@ -33,8 +33,22 @@ current_ip="$(curl -s ifconfig.co)"
 cached_ip="$(cat $cache_file)"
 
 if [ "$current_ip" != "$cached_ip" ]; then
-    echo Cached address is outdated. Updating Cloudflare...
-    curl --request PUT \
+    echo $current_ip > $cache_file
+    echo "Cached address ($cached_ip) doesn't match actual address ($current_ip). Checking Cloudflare..."
+    cloudflare_details_raw=$(curl --silent \
+        --request GET \
+        --url https://api.cloudflare.com/client/v4/zones/$API_ZONE_ID/dns_records/$API_RECORD_ID \
+        --header "Content-Type: application/json" \
+        --header "Authorization: Bearer $API_TOKEN")
+    cloudflare_details_json=$(echo $cloudflare_details_raw | jq -r "to_entries|map(\"\(.key)=\(.value|tostring)\")|.[]")
+    cloudflare_ip=$(echo $cloudflare_details_json | grep -Po '(?<="content":")[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
+    if [ "$current_ip" == "$cloudflare_ip" ]; then
+        echo "Cloudflare address is correct. Update will be skipped."
+        exit 0
+    fi
+    echo "Cloudflare address ($cloudflare_ip) is outdated. Updating..."
+    curl --silent \
+        --request PUT \
         --url "https://api.cloudflare.com/client/v4/zones/$API_ZONE_ID/dns_records/$API_RECORD_ID" \
         --header "Content-Type: application/json" \
         --header "Authorization: Bearer $API_TOKEN" \
@@ -46,5 +60,4 @@ if [ "$current_ip" != "$cached_ip" ]; then
             \"comment\": \"Updated by AutoDNSUpdate on $(date)\",
             \"ttl\": 1
         }"
-    echo $current_ip > $cache_file
 fi
