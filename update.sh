@@ -6,10 +6,10 @@
 ##########################################################################
 
 script_dir=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
-echo $script_dir
-
 api_config_file="$script_dir/api.conf"
-if [ ! -f $api_config_file ]; then
+cache_file="$script_dir/cached_ip.txt"
+
+function initialize_config () {
     cat > $api_config_file<< EOF
 API_TOKEN=
 API_ZONE_ID=
@@ -17,6 +17,10 @@ API_RECORD_ID=
 DOMAIN_NAME=
 PROXIED=
 EOF
+}
+
+if [ ! -f $api_config_file ]; then
+    initialize_config
 fi
 source $api_config_file
 if [ -z $API_TOKEN ] || [ -z $API_ZONE_ID ] || [ -z API_ACCOUNT_ID ] || [ -z DOMAIN_NAME ] || [ -z PROXIED ]; then
@@ -24,7 +28,6 @@ if [ -z $API_TOKEN ] || [ -z $API_ZONE_ID ] || [ -z API_ACCOUNT_ID ] || [ -z DOM
     exit 1
 fi
 
-cache_file="$script_dir/cached_ip.txt"
 if [ ! -f $cache_file ]; then
     touch $cache_file
 fi
@@ -33,7 +36,6 @@ current_ip="$(curl -s ifconfig.co)"
 cached_ip="$(cat $cache_file)"
 
 if [ "$current_ip" != "$cached_ip" ]; then
-    echo $current_ip > $cache_file
     echo "Cached address ($cached_ip) doesn't match actual address ($current_ip). Checking Cloudflare..."
     cloudflare_details_raw=$(curl --silent \
         --request GET \
@@ -44,6 +46,7 @@ if [ "$current_ip" != "$cached_ip" ]; then
     cloudflare_ip=$(echo $cloudflare_details_json | grep -Po '(?<="content":")[0-9]*\.[0-9]*\.[0-9]*\.[0-9]*')
     if [ "$current_ip" == "$cloudflare_ip" ]; then
         echo "Cloudflare address is correct. Update will be skipped."
+        echo $current_ip > $cache_file
         exit 0
     fi
     echo "Cloudflare address ($cloudflare_ip) is outdated. Updating..."
@@ -60,4 +63,5 @@ if [ "$current_ip" != "$cached_ip" ]; then
             \"comment\": \"Updated by AutoDNSUpdate on $(date)\",
             \"ttl\": 1
         }"
+    echo $current_ip > $cache_file
 fi
