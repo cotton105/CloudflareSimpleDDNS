@@ -23,7 +23,7 @@ if [ ! -f $api_config_file ]; then
     initialize_config
 fi
 source $api_config_file
-if [ -z $API_TOKEN ] || [ -z $API_ZONE_ID ] || [ -z API_ACCOUNT_ID ] || [ -z DOMAIN_NAME ] || [ -z PROXIED ]; then
+if [ -z $API_TOKEN ] || [ -z $API_ZONE_ID ] || [ -z $API_ACCOUNT_ID ] || [ -z $DOMAIN_NAME ] || [ -z $PROXIED ]; then
     echo API details must be specified in api.conf.
     exit 1
 fi
