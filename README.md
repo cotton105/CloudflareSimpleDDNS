@@ -1,3 +1,6 @@
+## ❗NOTICE❗
+Abandoned in favour of Timothy Miller's [Cloudflare DDNS](https://github.com/timothymiller/cloudflare-ddns).
+
 ## About
 This is a **Bash** script to automatically update your **Cloudflare** domain to point to your host's own public IPv4 address.
 
